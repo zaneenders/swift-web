@@ -1,0 +1,10 @@
+services:
+  website:
+    image: swift-web:arm64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ARCH: aarch64
+    ports:
+      - 8080:8080
