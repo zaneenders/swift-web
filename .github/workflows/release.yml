@@ -40,15 +40,31 @@ jobs:
     needs: build-binary
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Download built artifact
         uses: actions/download-artifact@v4
         with:
           name: WebServer
           path: ./release
 
+      - name: Create Git tag for this commit
+        id: tag
+        run: |
+          TAG="main-$(git rev-parse --short HEAD)"
+          git tag "$TAG"
+          git push origin "$TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "Main build ${{ steps.tag.outputs.tag }}"
+          body: "Automated build from push to main."
+          draft: false
+          prerelease: true
           files: ./release/WebServer
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
