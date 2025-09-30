@@ -2,8 +2,8 @@ name: Build Static Swift Binary
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
 
 jobs:
   build-binary:
